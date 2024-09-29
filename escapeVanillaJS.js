@@ -20,22 +20,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // 🪲 Bug: Asynchronous function ?
-    document.getElementById("solveRoom3").addEventListener("click", () => {
-        fetch('directions.json') 
-            .then(response => response.json())
-            .then(directions => {
-                navigateLabyrinth(directions)
-                    .then(message => {
-                        // 🪲 Bug: Incorrect method
-                        document.getElementById("room3Result").innerHTML = message;
-                    });
-            });
+    document.getElementById("solveRoom3").addEventListener("click", async () => {
+        try {
+            const response = await fetch('directions.json');
+            const directions = await response.json();
+            const message = await navigateLabyrinth(directions);
+            document.getElementById("room3Result").textContent = message;
+        } catch (error) {
+            document.getElementById("room3Result").textContent = `Oops! There was an error: ${error}`;
+        }
     });
 });
 
 function findMostRecentBook(books) {
     // 🪲 Bug: Logic error
-    return books.reduce((mostRecent, book) => new Date(book.published) < new Date(mostRecent.published) ? book : mostRecent);
+    return books.reduce((mostRecent, book) => new Date(book.published) > new Date(mostRecent.published) ? book : mostRecent);
 }
 
 function findIntersection(setA, setB) {
